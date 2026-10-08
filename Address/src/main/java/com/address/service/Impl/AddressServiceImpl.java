@@ -2,6 +2,7 @@ package com.address.service.Impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -29,17 +30,8 @@ public class AddressServiceImpl implements AddressService{
 
 	@Override
 	public List<AddressDto> saveAddress(AddressRequest addressRequest) {	
-		List<Address> listToSave = new ArrayList<>();
-		for(AddressRequestDto addressRequestDto : addressRequest.getAddressRequestDtoList()) {
-			Address address = new Address();
-			address.setState(addressRequestDto.getState());
-			address.setCity(addressRequestDto.getCity());
-			address.setPinCode(addressRequestDto.getPinCode());
-			address.setCountry(addressRequestDto.getCountry());
-			address.setAddressType(addressRequestDto.getAddressType());
-			address.setEmpId(addressRequest.getEmpId());
-			listToSave.add(address);		
-		}
+		
+		List <Address>listToSave  = this.saveOrUpdateAddressRequest(addressRequest);
 		List<Address> saveAddress=addressRepository.saveAll(listToSave);
 		return saveAddress.stream().map((Address address) -> modelMapper.map(address, AddressDto.class)).toList();
 	}
@@ -54,9 +46,25 @@ public class AddressServiceImpl implements AddressService{
 			log.info("new address create for employee id ()" , addressRequest.getEmpId());
 		    
 		}
-		return null;
+		List <Address>listToUpdate   = this.saveOrUpdateAddressRequest(addressRequest);
+		
+		List <Long> upComingNonNullIds = listToUpdate.stream().map(Address::getId).filter(Objects::nonNull).toList();
+		List<Long>existingIds = addressByEmpId.stream().map(Address::getId).toList();
+		
+		List<Long> idsToDelete = existingIds.stream().filter(id -> !upComingNonNullIds.contains(id)).toList();
+		if(!idsToDelete.isEmpty()) {
+			addressRepository.deleteAllById(idsToDelete);
+		}
+		List <Address> updateAddress = addressRepository.saveAll(listToUpdate);
+		
+		return updateAddress.stream().map((Address address) -> modelMapper.map(address, AddressDto.class)).toList();
 	}
 
+	
+	
+	
+	
+	
 	@Override
 	public AddressDto getSingleAddress(Long id) {
 		// TODO Auto-generated method stub
@@ -75,7 +83,24 @@ public class AddressServiceImpl implements AddressService{
 		
 	}
         
-	   
+	 private List<Address> saveOrUpdateAddressRequest(AddressRequest addressRequest){
+		
+		 List<Address> listToSave = new ArrayList<>();
+			for(AddressRequestDto addressRequestDto : addressRequest.getAddressRequestDtoList()) {
+				Address address = new Address();
+				address.setId(addressRequestDto.getId()!=null ? addressRequestDto.getId() : null);
+				address.setState(addressRequestDto.getState());
+				address.setCity(addressRequestDto.getCity());
+				address.setPinCode(addressRequestDto.getPinCode());
+				address.setCountry(addressRequestDto.getCountry());
+				address.setAddressType(addressRequestDto.getAddressType());
+				address.setEmpId(addressRequest.getEmpId());
+				listToSave.add(address);		
+			}
+		 
+		 return listToSave;
+		 
+	 }
 	
 }
 
