@@ -83,8 +83,8 @@ public class AddressServiceImpl implements AddressService{
 
 	@Override
 	public void deleteAddress(Long id) {
-		// TODO Auto-generated method stub
-		
+		Address address = addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address not found with id :" +id));
+		addressRepository.delete(address);
 	}
         
 	 private List<Address> saveOrUpdateAddressRequest(AddressRequest addressRequest){
