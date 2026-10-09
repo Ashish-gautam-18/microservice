@@ -3,6 +3,7 @@ package com.address.service.Impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -61,9 +62,7 @@ public class AddressServiceImpl implements AddressService{
 	}
 
 	
-	
-	
-	
+
 	
 	@Override
 	public AddressDto getSingleAddress(Long id) {
@@ -78,7 +77,10 @@ public class AddressServiceImpl implements AddressService{
 	if(all.isEmpty()) {
 		throw new ResourceNotFoundException("No Address Found");
 	}
-		return null;
+	return all.stream()
+	          .map(address -> modelMapper.map(address, AddressDto.class))
+	          .toList();
+
 	}
 
 	@Override
