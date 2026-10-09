@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.address.exception.ResourceNotFoundException;
 import com.address.model.dto.AddressDto;
 import com.address.model.dto.AddressRequest;
 import com.address.model.dto.AddressRequestDto;
@@ -56,7 +57,6 @@ public class AddressServiceImpl implements AddressService{
 			addressRepository.deleteAllById(idsToDelete);
 		}
 		List <Address> updateAddress = addressRepository.saveAll(listToUpdate);
-		
 		return updateAddress.stream().map((Address address) -> modelMapper.map(address, AddressDto.class)).toList();
 	}
 
@@ -67,13 +67,17 @@ public class AddressServiceImpl implements AddressService{
 	
 	@Override
 	public AddressDto getSingleAddress(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+	Address address = addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address not found with id :" +id));
+		return modelMapper.map(address, AddressDto.class);
 	}
 
 	@Override
 	public List<AddressDto> getAllAddress() {
-		// TODO Auto-generated method stub
+	List<Address> all = addressRepository.findAll();
+	if(all.isEmpty()) {
+		throw new ResourceNotFoundException("No Address Found");
+	}
 		return null;
 	}
 
