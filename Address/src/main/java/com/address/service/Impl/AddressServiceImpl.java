@@ -30,6 +30,7 @@ public class AddressServiceImpl implements AddressService{
 		this.modelMapper = modelMapper;
 	}
 
+	// Save address 
 	@Override
 	public List<AddressDto> saveAddress(AddressRequest addressRequest) {	
 		
@@ -39,6 +40,7 @@ public class AddressServiceImpl implements AddressService{
 	}
 
 	
+	// update addresses
 	@Override
 	public List<AddressDto> updateAddress(AddressRequest addressRequest) {
 		
@@ -63,7 +65,7 @@ public class AddressServiceImpl implements AddressService{
 
 	
 
-	
+	// getAddress by id
 	@Override
 	public AddressDto getSingleAddress(Long id) {
 		
@@ -83,6 +85,7 @@ public class AddressServiceImpl implements AddressService{
 
 	}
 
+	// delete address by id
 	@Override
 	public void deleteAddress(Long id) {
 		Address address = addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address not found with id :" +id));
