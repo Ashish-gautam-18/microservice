@@ -29,30 +29,35 @@ public class AddressController {
 	
 	}
 	
+	 // save address for employee
 	@PostMapping("/save")
 	public ResponseEntity<List<AddressDto>> saveAddress(@RequestBody AddressRequest addressDto){
 		List<AddressDto> response = addressService.saveAddress(addressDto);
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 	
+	// update employee address
 	@PutMapping("/update")
 	public ResponseEntity<List<AddressDto>> updateAddress(@RequestBody AddressRequest addressDto){
 		List<AddressDto> response = addressService.updateAddress(addressDto);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
+	//show all address
 	@GetMapping("/allAddress")
 	public ResponseEntity<List<AddressDto>> getAllAddress(){
 		List<AddressDto> response = addressService.getAllAddress();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
+	// find address id
 	@GetMapping("/{addressId}")
 	public ResponseEntity<AddressDto> getAddressById(@PathVariable Long addressId	){
 	AddressDto response = addressService.getSingleAddress(addressId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
+	//delete address by emp id or address id
 	@DeleteMapping("/delete/{addressId}")
 	public ResponseEntity<String> deleteAddress(@PathVariable Long addressId){
 		addressService.deleteAddress(addressId);
